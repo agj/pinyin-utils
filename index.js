@@ -23,7 +23,9 @@ const vovels = {
 	"i": ['ī', 'í', 'ǐ', 'ì'],
 	"o": ['ō', 'ó', 'ǒ', 'ò'],
 	"u": ['ū', 'ú', 'ǔ', 'ù'],
-	"ü": ['ǖ', 'ǘ', 'ǚ', 'ǜ']
+	"ü": ['ǖ', 'ǘ', 'ǚ', 'ǜ'],
+	"n": ['n̄', 'ń', 'ň', 'ǹ'],
+	"m": ['m̄', 'ḿ', 'm̌', 'm̀'],
 }
 
 const toneNumberRegex = /[a-zü](\d)/;
@@ -74,10 +76,10 @@ const markToNumber = (text) => {
 const numberToMark = (text) => {
 	const tone = getToneNumber(text)
 
-	text = text.replace(/\d/g, '')
+	text = removeTone(text)
 
 	if (tone !== 5) {
-		const matchedVovels = text.match(/[aeiouü]/g)
+		const matchedVovels = text.match(/[nmaeiouü]/g)
 		if (matchedVovels) {
 			let vovel = matchedVovels[matchedVovels.length-1]
 
