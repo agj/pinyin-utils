@@ -79,15 +79,21 @@ const numberToMark = (text) => {
 	text = removeTone(text)
 
 	if (tone !== 5) {
-		const matchedVovels = text.match(/[nmaeiouü]/g)
-		if (matchedVovels) {
-			let vovel = matchedVovels[matchedVovels.length-1]
+		const matchedNM = text.match(/^[nm]$/)
+		if (matchedNM) {
+			const letter = matchedNM[matchedNM.length-1]
+			text = text.replace(letter, vovels[letter][tone-1])
+		} else {
+			const matchedVovels = text.match(/[aeiouü]/g)
+			if (matchedVovels) {
+				let vovel = matchedVovels[matchedVovels.length-1]
 
-			if (text.match('ou')) vovel = 'o'
-			if (text.match('a')) vovel = 'a'
-			if (text.match('e')) vovel = 'e'
+				if (text.match('ou')) vovel = 'o'
+				if (text.match('a')) vovel = 'a'
+				if (text.match('e')) vovel = 'e'
 
-			text = text.replace(vovel, vovels[vovel][tone-1])
+				text = text.replace(vovel, vovels[vovel][tone-1])
+			}
 		}
 	}
 

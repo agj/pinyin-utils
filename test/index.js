@@ -1,6 +1,9 @@
 'use strict'
 
 const utils = require('../index')
+const fs = require('fs');
+
+const syllables = fs.readFileSync('test/syllables.txt', 'utf-8').split('\n').map(l => l.split('\t'));
 
 describe('Codepoint to Unicode', () => {
 	it('should convert codepoint "U+6211" into 我', (done) => {
@@ -26,16 +29,13 @@ describe('Codepoint to Unicode', () => {
 
 describe('Tone number', () => {
 	it('should get the right tone number', (done) => {
-		utils.getToneNumber('wǒ')     .should.equal(3)
-		utils.getToneNumber('wo3')    .should.equal(3)
-		utils.getToneNumber('de5')    .should.equal(5)
-		utils.getToneNumber('de')     .should.equal(5)
-		utils.getToneNumber('ń')      .should.equal(2)
-		utils.getToneNumber('m̌')      .should.equal(3)
-		utils.getToneNumber('biáng')  .should.equal(2)
-		utils.getToneNumber('biang2') .should.equal(2)
-		utils.getToneNumber('miào')   .should.equal(4)
-		utils.getToneNumber('miao4')  .should.equal(4)
+		syllables.forEach(s => {
+			utils.getToneNumber(s[0]).should.equal(5)
+			utils.getToneNumber(s[1]).should.equal(1)
+			utils.getToneNumber(s[2]).should.equal(2)
+			utils.getToneNumber(s[3]).should.equal(3)
+			utils.getToneNumber(s[4]).should.equal(4)
+		})
 
 		done()
 	})
@@ -43,18 +43,19 @@ describe('Tone number', () => {
 
 describe('Remove tone', () => {
 	it('should remove the tone correctly', (done) => {
-		utils.removeTone('wǒ')     .should.equal('wo')
-		utils.removeTone('wo3')    .should.equal('wo')
-		utils.removeTone('de5')    .should.equal('de')
-		utils.removeTone('de')     .should.equal('de')
-		utils.removeTone('ń')      .should.equal('n')
-		utils.removeTone('n2')     .should.equal('n')
-		utils.removeTone('m̌')      .should.equal('m')
-		utils.removeTone('m3')     .should.equal('m')
-		utils.removeTone('biáng')  .should.equal('biang')
-		utils.removeTone('biang2') .should.equal('biang')
-		utils.removeTone('miào')   .should.equal('miao')
-		utils.removeTone('miao4')  .should.equal('miao')
+		syllables.forEach(s => {
+			utils.removeTone(s[0]).should.equal(s[0])
+			utils.removeTone(s[1]).should.equal(s[0])
+			utils.removeTone(s[2]).should.equal(s[0])
+			utils.removeTone(s[3]).should.equal(s[0])
+			utils.removeTone(s[4]).should.equal(s[0])
+
+			utils.removeTone(s[0] + '1').should.equal(s[0])
+			utils.removeTone(s[0] + '2').should.equal(s[0])
+			utils.removeTone(s[0] + '3').should.equal(s[0])
+			utils.removeTone(s[0] + '4').should.equal(s[0])
+			utils.removeTone(s[0] + '5').should.equal(s[0])
+		})
 
 		done()
 	})
@@ -62,23 +63,25 @@ describe('Remove tone', () => {
 
 describe('Convert', () => {
 	it('should convert tone number to mark correctly', (done) => {
-		utils.numberToMark('lü4')    .should.equal('lǜ')
-		utils.numberToMark('de')     .should.equal('de')
-		utils.numberToMark('de5')    .should.equal('de')
-		utils.numberToMark('n2')     .should.equal('ń')
-		utils.numberToMark('m3')     .should.equal('m̌')
-		utils.numberToMark('biang2') .should.equal('biáng')
-		utils.numberToMark('miao4')  .should.equal('miào')
+		syllables.forEach(s => {
+			utils.numberToMark(s[0]      ).should.equal(s[0])
+			utils.numberToMark(s[0] + '1').should.equal(s[1])
+			utils.numberToMark(s[0] + '2').should.equal(s[2])
+			utils.numberToMark(s[0] + '3').should.equal(s[3])
+			utils.numberToMark(s[0] + '4').should.equal(s[4])
+			utils.numberToMark(s[0] + '5').should.equal(s[0])
+		})
 
 		done()
 	})
 	it('should convert mark to tone number correctly', (done) => {
-		utils.markToNumber('lǜ')    .should.equal('lü4')
-		utils.markToNumber('de')    .should.equal('de')
-		utils.markToNumber('ń')     .should.equal('n2')
-		utils.markToNumber('m̌')     .should.equal('m3')
-		utils.markToNumber('biáng') .should.equal('biang2')
-		utils.markToNumber('miào')  .should.equal('miao4')
+		syllables.forEach(s => {
+			utils.markToNumber(s[0]).should.equal(s[0])
+			utils.markToNumber(s[1]).should.equal(s[0] + '1')
+			utils.markToNumber(s[2]).should.equal(s[0] + '2')
+			utils.markToNumber(s[3]).should.equal(s[0] + '3')
+			utils.markToNumber(s[4]).should.equal(s[0] + '4')
+		})
 
 		done()
 	})
